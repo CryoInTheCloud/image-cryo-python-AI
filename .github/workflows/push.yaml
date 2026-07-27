@@ -1,0 +1,28 @@
+name: Publish container image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "appendix"
+      - "conda-linux-64.lock"
+      - "custom_jupyter_server_config.json"
+      - "mime/**"
+      - "qgis.desktop"
+      - ".binder/**"
+      - ".github/workflows/build.yaml"  # rebuild if the build workflow changes
+      - ".github/workflows/push.yaml"  # rebuild if this workflow changes
+
+permissions: {}  # prevent excessive permissions on workflow level
+
+jobs:
+  call:
+    uses: ./.github/workflows/build.yaml
+    permissions:
+      packages: write  # needed to upload and publish cache to GitHub Packages
+    with:
+      environment: container
+    secrets:
+      username: ${{ secrets.QUAY_USERNAME }}
+      password: ${{ secrets.QUAY_PASSWORD }}

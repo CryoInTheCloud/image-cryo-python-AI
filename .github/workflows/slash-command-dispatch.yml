@@ -1,0 +1,35 @@
+name: Slash Command Dispatch
+
+on:
+  issue_comment:
+    types:
+      - created
+      # - edited  # add for test purposes, otherwise avoid to prevent processing unnecessary events
+
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
+jobs:
+  slashCommandDispatch:
+    permissions:
+      pull-requests: write  # for peter-evans/slash-command-dispatch to create PR reaction
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      # Generate token from CryoInTheCloud bot
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        id: app-token
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@9bdcd7914ec1b75590b790b844aa3b8eee7c683a # v5.0.2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          reaction-token: ${{ secrets.GITHUB_TOKEN }}
+          commands: |
+            condalock
+          issue-type: pull-request
+          permission: none
