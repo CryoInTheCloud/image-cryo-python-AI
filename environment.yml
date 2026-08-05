@@ -45,7 +45,7 @@ dependencies:
   - jupyter-offlinenotebook>=0.3
 
   # Access linux desktop from inside JupyterHub
-  - jupyter-remote-desktop-proxy>=3.0
+  - jupyter-remote-desktop-proxy>=3.0.1
   - jupyter-sshd-proxy>=0.2
   - jupyterlab-favorites>=3.2
   - jupyterlab-geojson>=3.4
