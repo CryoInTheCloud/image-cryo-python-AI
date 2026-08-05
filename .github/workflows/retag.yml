@@ -46,9 +46,11 @@ jobs:
       run: docker pull quay.io/cryointhecloud/cryo-python-ai:${SHA12}
 
     - name: Retag Images
-      run: docker tag cryointhecloud/cryo-python-ai:${SHA12} quay.io/cryointhecloud/cryo-python-ai:${TAG}
-      run: docker tag cryointhecloud/cryo-python-ai:${SHA12} quay.io/cryointhecloud/cryo-python-ai:latest
+      run: |
+         docker tag cryointhecloud/cryo-python-ai:${SHA12} quay.io/cryointhecloud/cryo-python-ai:${TAG}
+         docker tag cryointhecloud/cryo-python-ai:${SHA12} quay.io/cryointhecloud/cryo-python-ai:latest
 
     - name: Push Tags To Quay.io
-      run: docker push quay.io/cryointhecloud/cryo-python-ai:${TAG}
-      run: docker push quay.io/cryointhecloud/cryo-python-ai:latest
+      run: |
+         docker push quay.io/cryointhecloud/cryo-python-ai:${TAG}
+        docker push quay.io/cryointhecloud/cryo-python-ai:latest
