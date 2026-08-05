@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     env:
-      PACKAGE: cryo-hub-image
+      PACKAGE: cryo-python-ai
       REGISTRY: quay.io
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -47,7 +47,7 @@ jobs:
             type=raw,value=latest
 
       - name: Authenticate with distribution registry
-        if: github.repository == 'CryoInTheCloud/hub-image' && github.event_name == 'push'
+        if: github.repository == 'CryoInTheCloud/image-cryo-python-AI' && github.event_name == 'push'
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ${{ env.REGISTRY }}
