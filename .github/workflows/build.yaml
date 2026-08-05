@@ -70,7 +70,7 @@ jobs:
       - name: Run repo2docker
         env:
           PUSH_QUESTION: ${{ github.event_name == 'push' && '--push' || '--no-push' }}
-          CACHE_TO_ARG: ${{ (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && format('--DockerEngine.extra_buildx_build_args=--cache-to="type=registry,ref={0},mode=max"', steps.cache.outputs.tags) || '' }}
+          CACHE_TO_ARG: ${{ (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && format('--DockerEngine.extra_buildx_build_args=--cache-to=type=registry,ref={0},mode=max', steps.cache.outputs.tags) || '' }}
           STEPS_CACHE_OUTPUTS_TAGS: ${{ steps.cache.outputs.tags }}
           STEPS_IMAGE_OUTPUTS_TAGS: ${{ steps.image.outputs.tags }}
         run: >
