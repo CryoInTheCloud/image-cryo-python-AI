@@ -1,6 +1,14 @@
 #!/bin/bash -l
 set -euo pipefail
 
+# install LLM CLIs, accessible via Terminal or Jupyter AI
+# these are big, 100-400MB each, so only install them all if you really want them
+npm install -g @anthropic-ai/claude-code@2.1.220
+npm install -g @openai/codex@0.145.0
+OPENCODE_VERSION=v1.18.7
+platform="linux-x64"
+curl -s -L https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-${platform}.tar.gz | tar -xzv -C "${NB_PYTHON_PREFIX}/bin"
+
 # Put our custom Jupyter Server config into appropriate platform
 # This path is determined by looking at output of `jupyter --path` in the hub
 # We copy both to notebook server config and jupyter server config, because either can be
