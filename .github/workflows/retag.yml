@@ -53,4 +53,4 @@ jobs:
     - name: Push Tags To Quay.io
       run: |
          docker push quay.io/cryointhecloud/cryo-python-ai:${TAG}
-        docker push quay.io/cryointhecloud/cryo-python-ai:latest
+         docker push quay.io/cryointhecloud/cryo-python-ai:latest
