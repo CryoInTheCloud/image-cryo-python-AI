@@ -4,6 +4,8 @@ set -euo pipefail
 # install LLM CLIs, accessible via Terminal or Jupyter AI
 # these are big, 100-400MB each, so only install them all if you really want them
 npm install -g @anthropic-ai/claude-code@2.1.220
+
+#Claude ACP bridge 
 npm install -g @agentclientprotocol/claude-agent-acp
 
 npm install -g @openai/codex@0.145.0
