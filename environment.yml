@@ -85,7 +85,7 @@ dependencies:
   - cartopy>=0.24.0 # geospatial plotting with matplotlib
   - geemap>=0.32
   - geoviews>=1.15
-  - hvplot>=0.10
+  - hvplot>=0.12.2
   - ipyleaflet>=0.19
   - ipympl>=0.9 # This enables matplotlib interaction with jupyter widgets
   - leafmap>=0.36
