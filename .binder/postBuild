@@ -11,7 +11,8 @@ npm install -g @agentclientprotocol/claude-agent-acp
 npm install -g @openai/codex@0.145.0
 OPENCODE_VERSION=v1.18.7
 platform="linux-x64"
-curl -s -L https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-${platform}.tar.gz | tar -xzv -C "${NB_PYTHON_PREFIX}/bin"
+curl -fsSL https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-${platform}.tar.gz | tar -xzv -C "${NB_PYTHON_PREFIX}/bin"
+test -f "${NB_PYTHON_PREFIX}/bin/opencode"
 
 # Put our custom Jupyter Server config into appropriate platform
 # This path is determined by looking at output of `jupyter --path` in the hub
