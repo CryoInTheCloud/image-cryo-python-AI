@@ -85,3 +85,9 @@ jobs:
           --DockerEngine.extra_buildx_build_args=--cache-from="type=registry,ref=${STEPS_CACHE_OUTPUTS_TAGS}"
           $CACHE_TO_ARG
           .
+      - name: Promote to latest
+        if: github.repository == 'CryoInTheCloud/image-cryo-python-AI' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          docker buildx imagetools create \
+            -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.PACKAGE }}:latest \
+            ${{ steps.image.outputs.tags }}
