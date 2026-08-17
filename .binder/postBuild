@@ -14,6 +14,26 @@ platform="linux-x64"
 curl -fsSL https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-${platform}.tar.gz | tar -xzv -C "${NB_PYTHON_PREFIX}/bin"
 test -f "${NB_PYTHON_PREFIX}/bin/opencode"
 
+# Google Cloud CLI (gcloud, gsutil, bq) — pinned, installed outside $HOME
+# so it isn't wiped when the real user filesystem mounts at hub spin-up.
+GCLOUD_VERSION=580.0.0
+mkdir -p "${NB_PYTHON_PREFIX}/opt"
+curl -fsSL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  | tar -xz -C "${NB_PYTHON_PREFIX}/opt"
+
+"${NB_PYTHON_PREFIX}/opt/google-cloud-sdk/install.sh" \
+  --quiet \
+  --path-update=false \
+  --command-completion=false \
+  --usage-reporting=false
+
+for bin in gcloud gsutil bq; do
+  ln -sf "${NB_PYTHON_PREFIX}/opt/google-cloud-sdk/bin/${bin}" "${NB_PYTHON_PREFIX}/bin/${bin}"
+done
+
+test -x "${NB_PYTHON_PREFIX}/bin/gcloud"
+gcloud version
+
 # Put our custom Jupyter Server config into appropriate platform
 # This path is determined by looking at output of `jupyter --path` in the hub
 # We copy both to notebook server config and jupyter server config, because either can be
