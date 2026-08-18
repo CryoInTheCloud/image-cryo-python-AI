@@ -88,6 +88,8 @@ jobs:
       - name: Promote to latest
         if: github.repository == 'cryointhecloud/image-cryo-python-ai' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
+          SOURCE_TAG="${{ steps.image.outputs.tags }}"
+          REPO_REF="${SOURCE_TAG%%:*}"
           docker buildx imagetools create \
-            -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.PACKAGE }}:latest \
-            ${{ steps.image.outputs.tags }}
+            -t "${REPO_REF}:latest" \
+            "${SOURCE_TAG}"
