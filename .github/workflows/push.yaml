@@ -27,3 +27,4 @@ jobs:
     secrets:
       username: ${{ secrets.QUAY_USERNAME }}
       password: ${{ secrets.QUAY_PASSWORD }}
+      mothership_gcp_sa_key: ${{ secrets.MOTHERSHIP_GCP_SA_KEY }}
