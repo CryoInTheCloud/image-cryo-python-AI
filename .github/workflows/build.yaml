@@ -11,6 +11,8 @@ on:
         required: false
       password:
         required: false
+      mothership_gcp_sa_key:
+        required: false
 
 jobs:
   build:
@@ -67,10 +69,17 @@ jobs:
       - name: Install repo2docker
         run: pip install git+https://github.com/jupyterhub/repo2docker.git@6b59fafc364a549d1709866b0c559d097a052010
 
+      - name: Write GCP key for build
+        if: github.event_name == 'push'
+        run: |
+          umask 077
+          printf '%s' "${{ secrets.mothership_gcp_sa_key }}" > "${RUNNER_TEMP}/mothership-key.json"
+
       - name: Run repo2docker
         env:
           PUSH_QUESTION: ${{ github.event_name == 'push' && '--push' || '--no-push' }}
           CACHE_TO_ARG: ${{ (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && format('--DockerEngine.extra_buildx_build_args=--cache-to=type=registry,ref={0},mode=max', steps.cache.outputs.tags) || '' }}
+          GCP_KEY_ARG: ${{ github.event_name == 'push' && format('--DockerEngine.extra_buildx_build_args=--secret id=gcp_key,src={0}/mothership-key.json', runner.temp) || '' }}
           STEPS_CACHE_OUTPUTS_TAGS: ${{ steps.cache.outputs.tags }}
           STEPS_IMAGE_OUTPUTS_TAGS: ${{ steps.image.outputs.tags }}
         run: >
@@ -84,6 +93,7 @@ jobs:
           --image-name ${STEPS_IMAGE_OUTPUTS_TAGS}
           --DockerEngine.extra_buildx_build_args=--cache-from="type=registry,ref=${STEPS_CACHE_OUTPUTS_TAGS}"
           $CACHE_TO_ARG
+          $GCP_KEY_ARG
           .
       - name: Promote to latest
         if: github.repository == 'cryointhecloud/image-cryo-python-ai' && github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -93,3 +103,7 @@ jobs:
           docker buildx imagetools create \
             -t "${REPO_REF}:latest" \
             "${SOURCE_TAG}"
+
+      - name: Clean up temp key file
+        if: always()
+        run: rm -f "${RUNNER_TEMP}/mothership-key.json"
