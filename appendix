@@ -18,10 +18,14 @@ RUN ${MAMBA_EXE} env create --prefix ${NB_PYTHON_PREFIX} --yes --file "conda-lin
  && ${MAMBA_EXE} clean --all --force-pkgs-dirs --yes
 
 # Mothership GCP service account key — workshop-scoped, revoked after.
-# See build.yaml: injected via buildx --secret, never lands in a layer as raw input.
-RUN --mount=type=secret,id=gcp_key,required=true \
-    mkdir -p ${NB_PYTHON_PREFIX}/etc/gcp && \
-    cp /run/secrets/gcp_key ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json && \
-    chmod 600 ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
+# required=false so PR/test builds (which never receive this secret) don't fail.
+RUN --mount=type=secret,id=gcp_key,required=false \
+    if [ -s /run/secrets/gcp_key ]; then \
+        mkdir -p ${NB_PYTHON_PREFIX}/etc/gcp && \
+        cp /run/secrets/gcp_key ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json && \
+        chmod 600 ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json; \
+    else \
+        echo "No gcp_key secret provided — skipping (expected on PR/test builds)."; \
+    fi
 
 ENV GOOGLE_APPLICATION_CREDENTIALS=${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
