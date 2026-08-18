@@ -19,7 +19,7 @@ RUN ${MAMBA_EXE} env create --prefix ${NB_PYTHON_PREFIX} --yes --file "conda-lin
 
 # Mothership GCP service account key — workshop-scoped, revoked after.
 # See build.yaml: injected via buildx --secret, never lands in a layer as raw input.
-RUN --mount=type=secret=gcp_key,required=true \
+RUN --mount=type=secret,id=gcp_key,required=true \
     mkdir -p ${NB_PYTHON_PREFIX}/etc/gcp && \
     cp /run/secrets/gcp_key ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json && \
     chmod 600 ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
