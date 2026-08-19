@@ -17,6 +17,40 @@ RUN ${MAMBA_EXE} env create --prefix ${NB_PYTHON_PREFIX} --yes --file "conda-lin
  && ${MAMBA_EXE} list --prefix ${NB_PYTHON_PREFIX} \
  && ${MAMBA_EXE} clean --all --force-pkgs-dirs --yes
 
+# ---------------------------------------------------------------------------
+# Everything below MUST stay after the mamba env create above. That step
+# recreates ${NB_PYTHON_PREFIX} from the lockfile and deletes anything
+# postBuild wrote into it.
+# ---------------------------------------------------------------------------
+
+RUN OPENCODE_VERSION=v1.18.7 \
+ && curl -fsSL "https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-x64.tar.gz" \
+      | tar -xz -C ${NB_PYTHON_PREFIX}/bin \
+ && test -x ${NB_PYTHON_PREFIX}/bin/opencode
+
+RUN GCLOUD_VERSION=580.0.0 \
+ && mkdir -p ${NB_PYTHON_PREFIX}/opt \
+ && curl -fsSL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+      | tar -xz -C ${NB_PYTHON_PREFIX}/opt \
+ && ${NB_PYTHON_PREFIX}/opt/google-cloud-sdk/install.sh --quiet \
+      --path-update=false --command-completion=false --usage-reporting=false \
+ && for b in gcloud gsutil bq; do \
+      ln -sf ${NB_PYTHON_PREFIX}/opt/google-cloud-sdk/bin/$b ${NB_PYTHON_PREFIX}/bin/$b; \
+    done \
+ && ${NB_PYTHON_PREFIX}/bin/gcloud version
+
+# Mothership CLI. Pinned so a mid-workshop upstream push can't change what
+# participants get. Bump deliberately.
+RUN MOTHERSHIP_REF=main \
+ && ${NB_PYTHON_PREFIX}/bin/pip install --no-cache-dir \
+      "git+https://github.com/mikerjacobi/agent-workshop.git@${MOTHERSHIP_REF}#subdirectory=cli" \
+ && ${NB_PYTHON_PREFIX}/bin/mothership --version
+
+# Repo is copied to /srv/repo at build step 18; the build context root has it
+# under src/, so copy from the installed location rather than the context.
+RUN cp /srv/repo/custom_jupyter_server_config.json ${NB_PYTHON_PREFIX}/etc/jupyter/jupyter_server_config.d/ \
+ && cp /srv/repo/custom_jupyter_server_config.json ${NB_PYTHON_PREFIX}/etc/jupyter/jupyter_notebook_config.d/
+
 # Mothership GCP service account key — workshop-scoped, revoked after.
 # required=false so PR/test builds (which never receive this secret) don't fail.
 RUN --mount=type=secret,id=gcp_key,required=false \
@@ -28,4 +62,6 @@ RUN --mount=type=secret,id=gcp_key,required=false \
         echo "No gcp_key secret provided — skipping (expected on PR/test builds)."; \
     fi
 
+# Path only, never the key itself — the SecretsUsedInArgOrEnv warning BuildKit
+# prints here is a false positive.
 ENV GOOGLE_APPLICATION_CREDENTIALS=${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
