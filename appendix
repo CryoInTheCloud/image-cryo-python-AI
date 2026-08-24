@@ -65,3 +65,14 @@ RUN --mount=type=secret,id=gcp_key,required=false \
 # Path only, never the key itself — the SecretsUsedInArgOrEnv warning BuildKit
 # prints here is a false positive.
 ENV GOOGLE_APPLICATION_CREDENTIALS=${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
+
+# ---------------------------------------------------------------------------
+# Upgrade Jupyter AI to the 3.2.0a0 pre-release (PyPI-only) using uv.
+# MUST stay after the `mamba env create` above, which recreates the prefix from
+# the lockfile. conda-forge only ships stable jupyter-ai ~=3.0; the a0
+# pre-release and its pre-release dependency family live only on PyPI. We use
+# uv (not plain pip) so the whole pre-release graph resolves atomically instead
+# of leaving a half-upgraded, inconsistent conda env. See the script header for
+# details; override JUPYTER_AI_VERSION / JUPYTER_AI_EXTRAS to change the target.
+RUN bash /srv/repo/install-jupyter-ai-prerelease.sh
+
