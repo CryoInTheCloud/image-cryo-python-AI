@@ -40,6 +40,9 @@ dependencies:
   # Jupyter tools
   - ipython~=8.17
   - ipywidgets>=8.1
+  # uv is used by the appendix post-build step to install the jupyter-ai
+  # pre-release from PyPI (see install-jupyter-ai-prerelease.sh).
+  - uv
   # jupyter-ai is installed as a pre-release (3.2.0a0) from PyPI via uv in the
   # appendix (see install-jupyter-ai-prerelease.sh), because conda-forge does
   # not yet ship 3.2.x. Keep this commented out until Jupyter AI v3.2.0 is on

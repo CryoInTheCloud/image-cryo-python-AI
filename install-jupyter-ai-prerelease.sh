@@ -38,11 +38,17 @@ JUPYTER_AI_VERSION="${JUPYTER_AI_VERSION:-3.2.0a0}"
 # JUPYTER_AI_EXTRAS="[jupyternaut]" (pulls jupyter-ai-jupyternaut + litellm).
 JUPYTER_AI_EXTRAS="${JUPYTER_AI_EXTRAS:-}"
 
-echo ">>> Installing uv (standalone binary) ..."
-export UV_INSTALL_DIR="${UV_INSTALL_DIR:-/tmp/uv-bin}"
-export UV_UNMANAGED_INSTALL="${UV_INSTALL_DIR}"   # install just the binary, no shell shims
-curl -LsSf https://astral.sh/uv/install.sh | sh
-UV="${UV_INSTALL_DIR}/uv"
+echo ">>> Using uv from the conda environment ..."
+# uv is provided by environment.yml / the lockfile (conda-forge). If it is
+# missing, the lockfile has not been regenerated since uv was added to
+# environment.yml — run the repo's `/condalock` command (or conda-lock locally).
+UV="${PREFIX}/bin/uv"
+if [[ ! -x "${UV}" ]]; then
+  echo "ERROR: uv not found at ${UV}." >&2
+  echo "       Add 'uv' to environment.yml and regenerate conda-linux-64.lock" >&2
+  echo "       (comment '/condalock' on the PR, or run conda-lock locally)." >&2
+  exit 1
+fi
 "${UV}" --version
 
 SPEC="jupyter-ai${JUPYTER_AI_EXTRAS}==${JUPYTER_AI_VERSION}"
