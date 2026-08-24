@@ -33,10 +33,10 @@ fi
 
 # Overridable knobs.
 JUPYTER_AI_VERSION="${JUPYTER_AI_VERSION:-3.2.0a0}"
-# The [jupyternaut] extra pulls the default model-provider persona
-# (jupyter-ai-jupyternaut + jupyter-ai-litellm) so Jupyter AI is actually usable
-# out of the box. Set JUPYTER_AI_EXTRAS="" to install the bare package.
-JUPYTER_AI_EXTRAS="${JUPYTER_AI_EXTRAS:-[jupyternaut]}"
+# Extras to install alongside jupyter-ai. Empty by default (bare package). To
+# get a default model-provider persona out of the box, set
+# JUPYTER_AI_EXTRAS="[jupyternaut]" (pulls jupyter-ai-jupyternaut + litellm).
+JUPYTER_AI_EXTRAS="${JUPYTER_AI_EXTRAS:-}"
 
 echo ">>> Installing uv (standalone binary) ..."
 export UV_INSTALL_DIR="${UV_INSTALL_DIR:-/tmp/uv-bin}"
