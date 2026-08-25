@@ -43,7 +43,7 @@ dependencies:
   # uv is used by the appendix post-build step to install the jupyter-ai
   # pre-release from PyPI (see install-jupyter-ai-prerelease.sh).
   - uv
-  # jupyter-ai is installed as a pre-release (3.2.0a0) from PyPI via uv in the
+  # jupyter-ai is installed as a pre-release from PyPI via uv in the
   # appendix (see install-jupyter-ai-prerelease.sh), because conda-forge does
   # not yet ship 3.2.x. Keep this commented out until Jupyter AI v3.2.0 is on
   # conda-forge, then re-enable it here (bumped to ~=3.2.0) and drop the
