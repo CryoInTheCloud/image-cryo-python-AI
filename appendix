@@ -53,7 +53,9 @@ RUN cp /srv/repo/custom_jupyter_server_config.json ${NB_PYTHON_PREFIX}/etc/jupyt
 
 # Mothership GCP service account key — workshop-scoped, revoked after.
 # required=false so PR/test builds (which never receive this secret) don't fail.
-RUN --mount=type=secret,id=gcp_key,required=false \
+# We use uid=1000 because this step is run as jovyan, and BuildKit mounts
+# secrets as owned by root by default, so this lets jovyan read them.
+RUN --mount=type=secret,id=gcp_key,required=false,uid=1000 \
     if [ -s /run/secrets/gcp_key ]; then \
         mkdir -p ${NB_PYTHON_PREFIX}/etc/gcp && \
         cp /run/secrets/gcp_key ${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json && \
