@@ -40,7 +40,15 @@ dependencies:
   # Jupyter tools
   - ipython~=8.17
   - ipywidgets>=8.1
-  - jupyter-ai~=3.0.0
+  # uv is used by the appendix post-build step to install the jupyter-ai
+  # pre-release from PyPI (see install-jupyter-ai-prerelease.sh).
+  - uv
+  # jupyter-ai is installed as a pre-release (3.2.0a0) from PyPI via uv in the
+  # appendix (see install-jupyter-ai-prerelease.sh), because conda-forge does
+  # not yet ship 3.2.x. Keep this commented out until Jupyter AI v3.2.0 is on
+  # conda-forge, then re-enable it here (bumped to ~=3.2.0) and drop the
+  # appendix post-build step.
+  # - jupyter-ai~=3.0.0
   # - jupyter-collaboration~=2.0.1
   - jupyter-offlinenotebook>=0.3
 
@@ -53,7 +61,9 @@ dependencies:
   - jupyterlab-h5web~=11.1
   - jupyterlab-myst>=2.4
   - jupyterlab_pygments>=0.3 # To bring extension up-to-date
-  - jupytergis>=0.5
+  # jupytergis pulls in jupyter-collaboration (RTC), which we are keeping out of
+  # this image. Removed until it can be installed without the RTC dependency.
+  # - jupytergis>=0.5
   - jupytext>=1.17
   - nbdime>=4.0
 
