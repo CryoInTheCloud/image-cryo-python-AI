@@ -69,9 +69,9 @@ RUN --mount=type=secret,id=gcp_key,required=false,uid=1000 \
 ENV GOOGLE_APPLICATION_CREDENTIALS=${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.json
 
 # ---------------------------------------------------------------------------
-# Upgrade Jupyter AI to the 3.2.0a0 pre-release (PyPI-only) using uv.
+# Upgrade Jupyter AI to the 3.2.0a1 pre-release (PyPI-only) using uv.
 # MUST stay after the `mamba env create` above, which recreates the prefix from
-# the lockfile. conda-forge only ships stable jupyter-ai ~=3.0; the a0
+# the lockfile. conda-forge only ships stable jupyter-ai ~=3.0; the a1
 # pre-release and its pre-release dependency family live only on PyPI. uv (from
 # environment.yml / the lockfile) resolves the whole pre-release graph in a
 # single pass, so the env moves atomically to a consistent state instead of the
@@ -79,6 +79,6 @@ ENV GOOGLE_APPLICATION_CREDENTIALS=${NB_PYTHON_PREFIX}/etc/gcp/mothership-key.js
 RUN ${NB_PYTHON_PREFIX}/bin/uv pip install \
       --python ${NB_PYTHON_PREFIX}/bin/python \
       --prerelease=allow \
-      "jupyter-ai==3.2.0a0" \
+      "jupyter-ai==3.2.0a1" \
  && ${NB_PYTHON_PREFIX}/bin/python -c "import importlib.metadata as m; print('installed jupyter-ai', m.version('jupyter-ai'))"
 
